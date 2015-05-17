@@ -16,6 +16,6 @@ public:
     static cocos2d::Scene* createScene();
     CREATE_FUNC(SplashScene);
     bool init();
-    void jumpToGame();
+    void jumpToGame(float t);
 };
 #endif /* defined(__Brave2048__SplashScene__) */

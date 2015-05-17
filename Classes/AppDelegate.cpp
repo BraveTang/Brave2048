@@ -29,6 +29,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto glview = director->getOpenGLView();
     if(!glview) {
         glview = GLViewImpl::create("My Game");
+       // glview->setFrameSize(480,720);
+       // glview->setDesignResolutionSize(640, 960, ResolutionPolicy::EXACT_FIT);
         director->setOpenGLView(glview);
     }
 

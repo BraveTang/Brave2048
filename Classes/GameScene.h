@@ -9,6 +9,14 @@
 #ifndef __Brave2048__GameScene__
 #define __Brave2048__GameScene__
 
-#include <stdio.h>
+#include "cocos2d.h"
+
+class GameScene:public cocos2d::Layer
+{
+public:
+    static cocos2d::Scene* createScene();
+    CREATE_FUNC(GameScene);
+    bool init();    
+};
 
 #endif /* defined(__Brave2048__GameScene__) */

@@ -74,11 +74,53 @@ bool GameScene::init()
             colorBack->addChild(layerTiled);
         }
     }
+    //初识化逻辑的网格数组
+    for (int i=0; i<GAME_ROWS; i++) {
+        for (int j=0; j<GAME_COLS; j++) {
+            map[i][j] = 0;//空白
+        }
+    }
     //初识化数字块
     auto tiled = MoveTiled::create();
     int num = rand()%16;
-    
     tiled->moveTo(num/4, num%4);
+    m_allTiled.pushBack(tiled);
+    map[num/4][num%4] = (int)m_allTiled.getIndex(tiled)+1;
     colorBack->addChild(tiled);
+    //触摸的处理
+    auto event = EventListenerTouchOneByOne::create();
+    event->onTouchBegan = [this](Touch* tou,Event* eve){
+        m_x = tou->getLocation().x;
+        m_y = tou->getLocation().y;
+        m_startMove = true;
+        return true;
+    };
+    event->onTouchMoved = [this](Touch* tou,Event* eve){
+        int x = tou->getLocation().x;
+        int y = tou->getLocation().y;
+        if (m_startMove&&(abs(m_x - x) > 10 || abs(m_y - y) > 10)) {
+            m_startMove =  false;
+            E_MOVE_DIR dir;
+            if (abs(m_x - x) > abs(m_y - y)) {
+                if (m_x < x) {
+                    dir = E_MOVE_DIR::RIGHT;
+                }
+                else
+                {
+                    dir = E_MOVE_DIR::LEFT;
+                }
+            }
+            else
+            {
+                if (m_y < y) {
+                    dir = E_MOVE_DIR::UP;
+                }
+                else
+                {
+                    dir = E_MOVE_DIR::DOWN;
+                }
+            }
+        }
+    };
     return true;
 }

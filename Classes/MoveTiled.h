@@ -14,13 +14,17 @@
 class MoveTiled:public cocos2d::Node
 {
 public:
-    int m_row;
-    int m_col;
-    int m_number;
     void showAt(int r, int c);//在某个位置显示某个块
     void moveTo(int r, int c);//移动到r行，c列
     CREATE_FUNC(MoveTiled);
     bool init();
+    const int getNumber()const;
+    void setNumber(const int n);
+private:
+    int m_row;
+    int m_col;
+    int m_number;
+    cocos2d::Label* label;
 };
 
 #endif /* defined(__Brave2048__MoveTiled__) */

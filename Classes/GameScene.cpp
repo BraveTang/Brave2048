@@ -55,13 +55,14 @@ bool GameScene::init()
 
     CCLOG("colorBackWidth:%d\n",colorBackWidth);
     CCLOG("colorBackHeight:%d\n",colorBackHeight);
-    auto colorBack = LayerColor::create(Color4B(170, 170, 170, 255),
+    colorBack = LayerColor::create(Color4B(170, 170, 170, 255),
                                         colorBackWidth, colorBackHeight);
     colorBack->ignoreAnchorPointForPosition(false);
     colorBack->setAnchorPoint(Vec2(0.5,0.5));
     
     colorBack->setPosition(Vec2(winSize.width/2,winSize.height/4));
     this->addChild(colorBack);
+    
     //添加数字网格槽
     int layerTiledWidth = (colorBackWidth - 2*5)/4;
     int layerTiledHeight = (colorBackHeight - 2*5)/4;
@@ -74,19 +75,16 @@ bool GameScene::init()
             colorBack->addChild(layerTiled);
         }
     }
-    //初识化逻辑的网格数组
-    for (int i=0; i<GAME_ROWS; i++) {
-        for (int j=0; j<GAME_COLS; j++) {
-            map[i][j] = 0;//空白
-        }
-    }
-    //初识化数字块
-    auto tiled = MoveTiled::create();
-    int num = rand()%16;
-    tiled->moveTo(num/4, num%4);
-    m_allTiled.pushBack(tiled);
-    map[num/4][num%4] = (int)m_allTiled.getIndex(tiled)+1;
-    colorBack->addChild(tiled);
+    //初始化4*4的移动块
+    this->createMap();
+    this->createNewMoveTiled();
+    this->createNewMoveTiled();
+    this->createNewMoveTiled();
+    this->createNewMoveTiled();
+    this->createNewMoveTiled();
+    this->createNewMoveTiled();
+    this->createNewMoveTiled();
+    this->createNewMoveTiled();
     //触摸的处理
     auto event = EventListenerTouchOneByOne::create();
     event->onTouchBegan = [this](Touch* tou,Event* eve){
@@ -123,4 +121,26 @@ bool GameScene::init()
         }
     };
     return true;
+}
+void GameScene::createMap()
+{
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            m_map[i][j] = MoveTiled::create();
+        }
+    }
+}
+void GameScene::createNewMoveTiled()
+{
+    int i = CCRANDOM_0_1()*4;
+    int j = CCRANDOM_0_1()*4;
+    if (m_map[i][j]->getNumber() > 0 ) {
+        createNewMoveTiled();
+    }
+    else
+    {
+        m_map[i][j]->setNumber(CCRANDOM_0_1()*10 < 1 ? 4 : 2);
+        colorBack->addChild(m_map[i][j]);
+        m_map[i][j]->moveTo(i, j);
+    }
 }

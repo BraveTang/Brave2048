@@ -18,10 +18,13 @@ public:
     static cocos2d::Scene* createScene();
     CREATE_FUNC(GameScene);
     bool init();
+    void createMap();
+    void createNewMoveTiled();
+    
 private:
     E_MOVE_DIR m_dir; //移动方向
-    int map[GAME_ROWS][GAME_ROWS];
-    cocos2d::Vector<MoveTiled*> m_allTiled;//保存所有块
+    MoveTiled* m_map[GAME_ROWS][GAME_ROWS];
+    cocos2d::LayerColor* colorBack;
     bool m_startMove;
     int m_x;
     int m_y;

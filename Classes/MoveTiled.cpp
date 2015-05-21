@@ -12,7 +12,36 @@ USING_NS_CC;
 
 void MoveTiled::showAt(int r, int c)//在某个位置显示某个块
 {
-
+    
+}
+int MoveTiled::getNumber()const
+{
+    return m_number;
+}
+void MoveTiled::setNumber(const int num)
+{
+    m_number = num;
+    label->setString(StringUtils::format("%d",this->m_number));
+}
+void MoveTiled::setBackGroud(const int number)
+{
+    switch (number) {
+        case 2:
+            bk->setColor(Color3B(200, 200, 200));
+            break;
+        case 4:
+            bk->setColor(Color3B(122, 57, 128));
+            break;
+        case 6:
+            bk->setColor(Color3B(122, 57, 128));
+            break;
+        case 8:
+            bk->setColor(Color3B(232, 224, 229));
+            break;
+        default:
+            break;
+    }
+    
 }
 void MoveTiled::moveTo(int r, int c)//移动到r行，c列
 {
@@ -21,7 +50,7 @@ void MoveTiled::moveTo(int r, int c)//移动到r行，c列
     auto winSize = Director::getInstance()->getWinSize();
     int colorBackWidth,colorBackHeight;
     int space = abs(winSize.width-winSize.height/2);
-    CCLOG("space:%d\n",space);
+    //CCLOG("space:%d\n",space);
     if (winSize.width > winSize.height/2) {
         colorBackWidth = winSize.width-space;
         colorBackHeight = winSize.height/2;
@@ -47,7 +76,7 @@ bool MoveTiled::init()
     auto winSize = Director::getInstance()->getWinSize();
     int colorBackWidth,colorBackHeight;
     int space = abs(winSize.width-winSize.height/2);
-    CCLOG("space:%d\n",space);
+    //CCLOG("space:%d\n",space);
     if (winSize.width > winSize.height/2) {
         colorBackWidth = winSize.width-space;
         colorBackHeight = winSize.height/2;
@@ -60,14 +89,14 @@ bool MoveTiled::init()
     int layerTiledWidth = (colorBackWidth - 2*5)/4;
     int layerTiledHeight = (colorBackHeight - 2*5)/4;
     
-    auto bk = LayerColor::create(Color4B(200,200,200,255),layerTiledWidth, layerTiledHeight);
+    bk = LayerColor::create(Color4B(200,200,200,255),layerTiledWidth, layerTiledHeight);
     this->addChild(bk);
     //数字层
     int n = rand()%10;
     this->m_number = n>0?2:4;
-    auto lable = Label::createWithSystemFont(StringUtils::format("%d",this->m_number), "宋体", 80);
-    lable->setPosition(Vec2(bk->getContentSize().width/2,bk->getContentSize().height/2));
-    lable->setColor(Color3B::BLACK);
-    bk->addChild(lable);
+    label = Label::createWithSystemFont(StringUtils::format("%d",this->m_number), "宋体", 80);
+    label->setPosition(Vec2(bk->getContentSize().width/2,bk->getContentSize().height/2));
+    label->setColor(Color3B::BLACK);
+    bk->addChild(label);
     return true;
 }

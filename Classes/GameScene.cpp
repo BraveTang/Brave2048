@@ -55,7 +55,7 @@ bool GameScene::init()
 
     CCLOG("colorBackWidth:%d\n",colorBackWidth);
     CCLOG("colorBackHeight:%d\n",colorBackHeight);
-    auto colorBack = LayerColor::create(Color4B(170, 170, 170, 255),
+    colorBack = LayerColor::create(Color4B(170, 170, 170, 255),
                                         colorBackWidth, colorBackHeight);
     colorBack->ignoreAnchorPointForPosition(false);
     colorBack->setAnchorPoint(Vec2(0.5,0.5));
@@ -75,18 +75,13 @@ bool GameScene::init()
         }
     }
     //初识化逻辑的网格数组
-    for (int i=0; i<GAME_ROWS; i++) {
-        for (int j=0; j<GAME_COLS; j++) {
-            map[i][j] = 0;//空白
+    for (int i=0; i<4; i++) {
+        for (int j=0; j<4 ; j++) {
+            m_map[i][j] = 0;//空白
         }
     }
     //初识化数字块
-    auto tiled = MoveTiled::create();
-    int num = rand()%16;
-    tiled->moveTo(num/4, num%4);
-    m_allTiled.pushBack(tiled);
-    map[num/4][num%4] = (int)m_allTiled.getIndex(tiled)+1;
-    colorBack->addChild(tiled);
+    newMoveTiled();
     //触摸的处理
     auto event = EventListenerTouchOneByOne::create();
     event->onTouchBegan = [this](Touch* tou,Event* eve){
@@ -120,7 +115,149 @@ bool GameScene::init()
                     dir = E_MOVE_DIR::DOWN;
                 }
             }
+            moveAllTiled(dir);//移动可移动的元素块
         }
     };
+    Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(event, this);
     return true;
+}
+
+void GameScene::moveAllTiled(E_MOVE_DIR dir)
+{
+    switch (dir) {
+        case E_MOVE_DIR::UP:
+            if(moveUp())
+            {
+                //产生新的块
+                newMoveTiled();
+            }
+            break;
+        case E_MOVE_DIR::DOWN:
+            if(moveDown())
+            {
+                //产生新的块
+                newMoveTiled();
+            }
+            break;
+        case E_MOVE_DIR::LEFT:
+            if(moveLeft())
+            {
+                //产生新的块
+                newMoveTiled();
+            }
+            break;
+        case E_MOVE_DIR::RIGHT:
+            if(moveRight())
+            {
+                //产生新的块
+                newMoveTiled();
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+void GameScene::newMoveTiled()
+{
+//    int i = CCRANDOM_0_1()*4;
+//    int j = CCRANDOM_0_1()*4;
+//    if (m_map[i][j] > 0) {
+//        newMoveTiled();
+//    }
+//    else
+//    {
+//        auto tiled = MoveTiled::create();
+//        //                    tiled->moveTo(i, j);
+//        //                    m_allTiled.pushBack(tiled);
+//        //                    m_map[i][j] = (int)m_allTiled.getIndex(tiled)+1;
+//           colorBack->addChild(tiled);
+//    }
+    CCLOG("test NEW\n");
+    long freeCount = 15 - m_allTiled.size();
+    if (freeCount == 0) {
+        return;
+    }
+    int num = rand()%freeCount;
+    CCLOG("num = %d\n",num);
+    int count=0;
+    bool isfind = false;
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            if (m_map[i][j] <= 0) {
+                count++;
+                if (count == num) {
+                    auto tiled = MoveTiled::create();
+                    tiled->moveTo(i, j);
+                    m_allTiled.pushBack(tiled);
+                    m_map[i][j] = (int)m_allTiled.getIndex(tiled)+1;
+                    colorBack->addChild(tiled);
+                    isfind = true;
+                    CCLOG("New Tiled:%d,%d\n",i,j);
+                    break;
+                }
+            }
+        }
+        if (isfind == true) {
+            break;
+        }
+    }
+    
+}
+bool GameScene::moveUp()
+{
+    bool isMove = false;
+    for (int col = 0; col < 4; col++) {
+        for (int row = 3; row >= 0; row--) {
+            for (int t_row = row - 1; t_row >= 0; t_row--) {
+                if (m_map[t_row][col] > 0) {
+                    if (m_map[row][col] <= 0) {
+                        m_allTiled.at(m_map[t_row][col]-1)->moveTo(row, col);
+                        m_map[row][col] = m_map[t_row][col];
+                        m_map[t_row][col] = 0;
+                        CCLOG("move1\n");
+                        isMove = true;
+                    }
+                    else if(m_map[row][col] > 0)
+                    {
+                        if (m_allTiled.at(m_map[t_row][col]-1)->getNumber() == m_allTiled.at(m_map[row][col]-1)->getNumber()) {
+                            m_allTiled.at(m_map[t_row][col]-1)->moveTo(row, col);
+                            m_allTiled.at(m_map[t_row][col]-1)->setNumber(m_allTiled.at(m_map[t_row][col]-1)->getNumber() * 2);
+                            m_allTiled.at(m_map[t_row][col]-1)->setBackGroud(m_allTiled.at(m_map[t_row][col]-1)->getNumber() * 2);
+                            m_allTiled.at(m_map[t_row][col]-1)->removeFromParent();
+                            m_allTiled.erase(m_allTiled.begin()+m_map[row][col]-1);
+                            
+                            //m_map[row][col] = m_map[t_row][col];
+                            //m_map[t_row][col] = 0;
+                            int index = m_map[t_row][col];
+                            for (int r = 0; <#condition#>; <#increment#>) {
+                                <#statements#>
+                            }
+                            CCLOG("move2:%d\n",index);
+                            isMove = true;
+                        }
+
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    return isMove;
+}
+bool GameScene::moveDown()
+{
+    bool isMove = false;
+    
+    return isMove;
+}
+bool GameScene::moveLeft()
+{
+    bool isMove = false;
+    return isMove;
+}
+bool GameScene::moveRight()
+{
+    bool isMove = false;
+    return isMove;
 }

@@ -55,7 +55,7 @@ bool GameScene::init()
 
     CCLOG("colorBackWidth:%d\n",colorBackWidth);
     CCLOG("colorBackHeight:%d\n",colorBackHeight);
-    auto colorBack = LayerColor::create(Color4B(170, 170, 170, 255),
+    colorBack = LayerColor::create(Color4B(170, 170, 170, 255),
                                         colorBackWidth, colorBackHeight);
     colorBack->ignoreAnchorPointForPosition(false);
     colorBack->setAnchorPoint(Vec2(0.5,0.5));
@@ -77,16 +77,11 @@ bool GameScene::init()
     //初识化逻辑的网格数组
     for (int i=0; i<GAME_ROWS; i++) {
         for (int j=0; j<GAME_COLS; j++) {
-            map[i][j] = 0;//空白
+            map[i][j] = -1;//空白
         }
     }
     //初识化数字块
-    auto tiled = MoveTiled::create();
-    int num = rand()%16;
-    tiled->moveTo(num/4, num%4);
-    m_allTiled.pushBack(tiled);
-    map[num/4][num%4] = (int)m_allTiled.getIndex(tiled)+1;
-    colorBack->addChild(tiled);
+    addNewTiled();
     //触摸的处理
     auto event = EventListenerTouchOneByOne::create();
     event->onTouchBegan = [this](Touch* tou,Event* eve){
@@ -122,5 +117,24 @@ bool GameScene::init()
             }
         }
     };
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(event, this);
     return true;
+}
+//十一中浴达批发市场向西走200米幸福逸院小区
+void GameScene::addNewTiled(void)
+{
+    int i = CCRANDOM_0_1()*4;
+    int j = CCRANDOM_0_1()*4;
+    if(map[i][j] > 0)
+    {
+        addNewTiled();
+    }
+    else{
+        auto tiled = MoveTiled::create();
+        tiled->setNumber(CCRANDOM_0_1()*10 < 1 ? 4 : 2);
+        tiled->moveTo(i,j);
+        m_allTiled.pushBack(tiled);
+        map[i][j] = (int)m_allTiled.getIndex(tiled);
+        colorBack->addChild(tiled);
+    }
 }

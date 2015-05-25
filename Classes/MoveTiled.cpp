@@ -65,9 +65,20 @@ bool MoveTiled::init()
     //数字层
     int n = rand()%10;
     this->m_number = n>0?2:4;
-    auto lable = Label::createWithSystemFont(StringUtils::format("%d",this->m_number), "宋体", 80);
+    lable = Label::createWithSystemFont(StringUtils::format("%d",this->m_number), "宋体", 80);
     lable->setPosition(Vec2(bk->getContentSize().width/2,bk->getContentSize().height/2));
     lable->setColor(Color3B::BLACK);
     bk->addChild(lable);
     return true;
+}
+
+const int MoveTiled::getNumber(void)const
+{
+    return m_number;
+}
+
+void MoveTiled::setNumber(int n)
+{
+    m_number = n;
+    lable->setString(StringUtils::format("%d",this->m_number));
 }

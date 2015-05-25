@@ -18,18 +18,10 @@ public:
     static cocos2d::Scene* createScene();
     CREATE_FUNC(GameScene);
     bool init();
-    void createMap();
-    void createNewMoveTiled();
-    cocos2d::LayerColor* createGameBack(const cocos2d::Size& winSize);
-    void createGameName(const cocos2d::Size& winSize,const std::string& str);
-    bool doRight();
-    bool doUp();
-    bool onTouchBegan(cocos2d::Touch* tou,cocos2d::Event* eve);
-    void onTouchMoved(cocos2d::Touch* tou,cocos2d::Event* eve);
 private:
+    E_MOVE_DIR m_dir; //移动方向
     int map[GAME_ROWS][GAME_ROWS];
-    std::vector<MoveTiled*> allTiled;
-    cocos2d::LayerColor* colorBack;
+    cocos2d::Vector<MoveTiled*> m_allTiled;//保存所有块
     bool m_startMove;
     int m_x;
     int m_y;

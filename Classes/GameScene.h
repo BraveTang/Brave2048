@@ -19,6 +19,10 @@ public:
     CREATE_FUNC(GameScene);
     bool init();
     void addNewTiled(void);
+    bool doUp(void);
+    bool doDown(void);
+    bool doRight(void);
+    bool doLeft(void);
 private:
     E_MOVE_DIR m_dir; //移动方向
     int map[GAME_ROWS][GAME_ROWS];

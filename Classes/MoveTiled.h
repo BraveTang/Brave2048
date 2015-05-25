@@ -25,6 +25,7 @@ public:
     bool init();
     const int getNumber(void)const;
     void setNumber(int n);
+    void doubleNumber(void);
 };
 
 #endif /* defined(__Brave2048__MoveTiled__) */

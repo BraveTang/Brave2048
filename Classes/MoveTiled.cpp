@@ -82,3 +82,8 @@ void MoveTiled::setNumber(int n)
     m_number = n;
     lable->setString(StringUtils::format("%d",this->m_number));
 }
+void MoveTiled::doubleNumber(void)
+{
+    m_number *= 2;
+    lable->setString(StringUtils::format("%d",this->m_number));
+}

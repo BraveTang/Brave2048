@@ -82,6 +82,8 @@ bool GameScene::init()
     }
     //初识化数字块
     addNewTiled();
+    //addNewTiled();
+    //addNewTiled();
     //触摸的处理
     auto event = EventListenerTouchOneByOne::create();
     event->onTouchBegan = [this](Touch* tou,Event* eve){
@@ -99,20 +101,36 @@ bool GameScene::init()
             if (abs(m_x - x) > abs(m_y - y)) {
                 if (m_x < x) {
                     dir = E_MOVE_DIR::RIGHT;
+                    if(doRight())
+                    {
+                        addNewTiled();
+                    }
                 }
                 else
                 {
                     dir = E_MOVE_DIR::LEFT;
+                    if(doLeft())
+                    {
+                        addNewTiled();
+                    }
                 }
             }
             else
             {
                 if (m_y < y) {
                     dir = E_MOVE_DIR::UP;
+                    if(doUp())
+                    {
+                        addNewTiled();
+                    }
                 }
                 else
                 {
                     dir = E_MOVE_DIR::DOWN;
+                    if(doDown())
+                    {
+                        addNewTiled();
+                    }
                 }
             }
         }
@@ -120,12 +138,11 @@ bool GameScene::init()
     _eventDispatcher->addEventListenerWithSceneGraphPriority(event, this);
     return true;
 }
-//十一中浴达批发市场向西走200米幸福逸院小区
 void GameScene::addNewTiled(void)
 {
     int i = CCRANDOM_0_1()*4;
     int j = CCRANDOM_0_1()*4;
-    if(map[i][j] > 0)
+    if(map[i][j] >= 0)
     {
         addNewTiled();
     }
@@ -137,4 +154,189 @@ void GameScene::addNewTiled(void)
         map[i][j] = (int)m_allTiled.getIndex(tiled);
         colorBack->addChild(tiled);
     }
+}
+
+bool GameScene::doUp(void)
+{
+    bool isMove = false;
+    for (int col = 0; col < 4; col++) {
+        for (int row = 3; row >= 0; row--) {
+            for (int row_t = row -1; row_t >= 0; row_t--) {
+                if (map[row][col] < 0) {
+                    if (map[row_t][col] >= 0) {
+                        
+                        m_allTiled.at(map[row_t][col])->moveTo(row, col);
+                        map[row][col] = map[row_t][col];
+                        map[row_t][col] = -1;
+                        isMove = true;
+                    }
+                }
+                else
+                {
+                    if (map[row_t][col] == -1) {
+                        continue;
+                    }
+                    if (m_allTiled.at(map[row][col])->getNumber() != m_allTiled.at(map[row_t][col])->getNumber()) {
+                        break;
+                    }
+                    else
+                    {
+                        m_allTiled.at(map[row][col])->doubleNumber();
+                        m_allTiled.at(map[row_t][col])->removeFromParent();
+                        m_allTiled.eraseObject(m_allTiled.at(map[row_t][col]));
+                        int index = map[row_t][col];
+                        for (int i = 0; i < 4; i++) {
+                            for (int j = 0; j < 4; j++) {
+                                if (map[i][j] > index) {
+                                    map[i][j]--;
+                                }
+                            }
+                        }
+                        map[row_t][col] = -1;
+                        isMove = true;
+                    }
+                }
+            }
+        }
+    }
+    return isMove;
+}
+
+bool GameScene::doDown(void)
+{
+    bool isMove = false;
+    for (int col = 0; col < 4; col++) {
+        for (int row = 0; row < 4; row++) {
+            for (int row_t = row + 1; row_t < 4; row_t++) {
+                if (map[row][col] < 0) {
+                    if (map[row_t][col] >= 0) {
+                        
+                        m_allTiled.at(map[row_t][col])->moveTo(row, col);
+                        map[row][col] = map[row_t][col];
+                        map[row_t][col] = -1;
+                        isMove = true;
+                    }
+                }
+                else
+                {
+                    if (map[row_t][col] == -1) {
+                        continue;
+                    }
+                    if(m_allTiled.at(map[row][col])->getNumber() != m_allTiled.at(map[row_t][col])->getNumber())
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        m_allTiled.at(map[row][col])->doubleNumber();
+                        m_allTiled.at(map[row_t][col])->removeFromParent();
+                        m_allTiled.eraseObject(m_allTiled.at(map[row_t][col]));
+                        int index = map[row_t][col];
+                        for (int i = 0; i < 4; i++) {
+                            for (int j = 0; j < 4; j++) {
+                                if (map[i][j] > index) {
+                                    map[i][j]--;
+                                }
+                            }
+                        }
+                        map[row_t][col] = -1;
+                        isMove = true;
+                    }
+                }
+            }
+        }
+    }
+    return isMove;
+}
+
+bool GameScene::doRight()
+{
+    bool isMove = false;
+    for (int row = 0; row < 4; row++) {
+        for (int col = 3; col >= 0; col--) {
+            for (int col_t = col -1; col_t >= 0; col_t--) {
+                if (map[row][col] < 0) {
+                    if (map[row][col_t] >= 0) {
+                        
+                        m_allTiled.at(map[row][col_t])->moveTo(row, col);
+                        map[row][col] = map[row][col_t];
+                        map[row][col_t] = -1;
+                        isMove = true;
+                    }
+                }
+                else
+                {
+                    if (map[row][col_t] == -1) {
+                        continue;
+                    }
+                    if (m_allTiled.at(map[row][col])->getNumber() != m_allTiled.at(map[row][col_t])->getNumber()) {
+                        break;
+                    }
+                    else
+                    {
+                        m_allTiled.at(map[row][col])->doubleNumber();
+                        m_allTiled.at(map[row][col_t])->removeFromParent();
+                        m_allTiled.eraseObject(m_allTiled.at(map[row][col_t]));
+                        int index = map[row][col_t];
+                        for (int i = 0; i < 4; i++) {
+                            for (int j = 0; j < 4; j++) {
+                                if (map[i][j] > index) {
+                                    map[i][j]--;
+                                }
+                            }
+                        }
+                        map[row][col_t] = -1;
+                        isMove = true;
+                    }
+                }
+            }
+        }
+    }
+    return isMove;
+}
+
+bool GameScene::doLeft()
+{
+    bool isMove = false;
+    for (int row = 0; row < 4; row++) {
+        for (int col = 0; col < 4; col++) {
+            for (int col_t = col + 1; col_t < 4; col_t++) {
+                if (map[row][col] < 0) {
+                    if (map[row][col_t] >= 0) {
+                        
+                        m_allTiled.at(map[row][col_t])->moveTo(row, col);
+                        map[row][col] = map[row][col_t];
+                        map[row][col_t] = -1;
+                        isMove = true;
+                    }
+                }
+                else
+                {
+                    if (map[row][col_t] == -1) {
+                        continue;
+                    }
+                    if (m_allTiled.at(map[row][col])->getNumber() != m_allTiled.at(map[row][col_t])->getNumber()) {
+                        break;
+                    }
+                    else
+                    {
+                        m_allTiled.at(map[row][col])->doubleNumber();
+                        m_allTiled.at(map[row][col_t])->removeFromParent();
+                        m_allTiled.eraseObject(m_allTiled.at(map[row][col_t]));
+                        int index = map[row][col_t];
+                        for (int i = 0; i < 4; i++) {
+                            for (int j = 0; j < 4; j++) {
+                                if (map[i][j] > index) {
+                                    map[i][j]--;
+                                }
+                            }
+                        }
+                        map[row][col_t] = -1;
+                        isMove = true;
+                    }
+                }
+            }
+        }
+    }
+    return isMove;
 }

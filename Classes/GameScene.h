@@ -20,10 +20,15 @@ public:
     bool init();
     void createMap();
     void createNewMoveTiled();
-    
+    cocos2d::LayerColor* createGameBack(const cocos2d::Size& winSize);
+    void createGameName(const cocos2d::Size& winSize,const std::string& str);
+    bool doRight();
+    bool doUp();
+    bool onTouchBegan(cocos2d::Touch* tou,cocos2d::Event* eve);
+    void onTouchMoved(cocos2d::Touch* tou,cocos2d::Event* eve);
 private:
-    E_MOVE_DIR m_dir; //移动方向
-    MoveTiled* m_map[GAME_ROWS][GAME_ROWS];
+    int map[GAME_ROWS][GAME_ROWS];
+    std::vector<MoveTiled*> allTiled;
     cocos2d::LayerColor* colorBack;
     bool m_startMove;
     int m_x;
